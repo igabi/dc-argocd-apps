@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dc-python-app-a
+  namespace: argocd
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: ghcr.io/igabi/dc-python-app-a
+spec:
+  destination:
+    namespace: dc-python-app
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: dc-python-app-a
+    repoURL: https://igabi@github.com/igabi/dc-helmchart.git
+    targetRevision: HEAD 
+  syncPolicy:
+    automated: {}
+    retry:
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m0s
+      limit: 2
+    syncOptions:
+    - CreateNamespace=true
+    - ApplyOutOfSyncOnly=true
